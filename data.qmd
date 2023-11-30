@@ -1,5 +1,88 @@
+---
+title: "Pset4"
+execute:
+  echo: true
+  warning: false
+format:
+  html:
+    fig-width: 7
+    fig-height: 4
+    out-width: 60%
+    embed-resources: true
+---
+
 # Data
+## Data Sources
+1. **Dataset 1**: "Greenhouse Gas Emissions from Large Facilities"
+   - **Collector**: [Canadian Government](https://open.canada.ca/data/en/dataset/756bc907-34bb-4b33-9a87-b3c1a6c3f292/resource/d069f676-021a-4ebb-831d-915492b602dd)
+   - **Data Collection**: This dataset is likely collected through mandatory reporting by facilities, adhering to government environmental regulations.
+   - **Format**: CSV
+   - **Dimensions**: Includes facility ID, name, company name, location, total emissions, and industry classification.
+   - **Frequency of Updates**: Annually
+   - **Issues/Problems**: Potential underreporting or inaccuracies in self-reported data.
+
+2. **Dataset 2**: "PDGES-GHGRP-GHGEmissionsGES-2004-Present"
+   - **Collector**: [Environment and Climate Change Canada](https://open.canada.ca/data/en/dataset/a8ba14b7-7f23-462a-bdbb-83b0ef629823/resource/14ea1309-666a-420e-89cc-7ec294abe890)
+   - **Data Collection**: Collected under the Greenhouse Gas Reporting Program (GHGRP), focusing on facilities emitting 10,000 tonnes or more of GHGs in CO2 equivalent per year.
+   - **Format**: CSV
+   - **Dimensions**: Extensive data including facility ID, location, year of reference, and detailed emission data across different categories.
+   - **Frequency of Updates**: Annually
+   - **Issues/Problems**: Complex data structure requiring significant preprocessing for analysis.
+
+## Importing the Data
+The datasets will be imported into R for analysis. R is particularly adept at handling and processing data, making it an excellent choice for this task. 
+
+1. **Reading the CSV Files**: The `read.csv()` function in R will be used to import the datasets. This function is versatile and can handle various data formats and complexities.
+
+2. **Handling Encoding Issues**: If there are any encoding issues (common with diverse data sources), the `fileEncoding` parameter can be adjusted accordingly.
+
+3. **Data Inspection**: After importing the data, functions like `head()`, `summary()`, and `str()` can be used to inspect the datasets. This step is crucial to understand the structure and quality of the data.
 
 ## Description
+The datasets will be used to answer the research questions as follows:
+
+1. **Emission Patterns**: Time-series analysis will be performed to observe trends in emissions over the years.
+
+2. **Sector Analysis**: Emissions will be aggregated by industrial sectors to identify major contributors.
+
+3. **Geographical Distribution**: Geospatial analysis will reveal regional disparities in emissions.
+
+4. **Facility-Specific Insights**: Individual facilities with unusually high or low emissions will be identified for further investigation.
 
 ## Missing value analysis
+
+```{r}
+library(ggplot2)
+library(reshape2)
+
+data <- read.csv("Greenhouse gas emissions from large facilities.csv", na.strings = c("", "n/a", "N/A", "NA"))
+
+# Create a dataframe to visualize missing values
+missing_data <- is.na(data)
+
+# Bar Plot for Missing Values
+missing_counts <- colSums(missing_data)
+missing_df <- data.frame(column = names(missing_counts), missing_count = missing_counts)
+ggplot(missing_df, aes(x = reorder(column, missing_count), y = missing_count)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(title = "Bar Plot of Missing Values in Each Column", x = "Columns", y = "Number of Missing Values") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+
+
+```
+
+```{r}
+# Heatmap for Missing Values
+melted_data <- melt(missing_data)
+ggplot(melted_data, aes(x = Var2, y = Var1)) +
+  geom_tile(aes(fill = factor(value))) +
+  scale_fill_manual(values = c("TRUE" = "blue", "FALSE" = "skyblue")) +
+  labs(title = "Heatmap of Missing Values in the Dataset", x = "Columns", y = "Rows") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+
+
