@@ -61,9 +61,9 @@ library(readr)
 library(dplyr)
 library(forcats)
 
-Fac_emis <- read_csv("PDGES-GHGRP-GHGEmissionsGES-2004-Present.csv", locale=locale(encoding="latin1"))
+Fac_emis <- read_csv("data/PDGES-GHGRP-GHGEmissionsGES-2004-Present.csv", locale=locale(encoding="latin1"))
 
-data <- read.csv("Greenhouse gas emissions from large facilities.csv", na.strings = c("", "n/a", "N/A", "NA"))
+data <- read.csv("data/Greenhouse gas emissions from large facilities.csv", na.strings = c("", "n/a", "N/A", "NA"))
 
 # Create a dataframe to visualize missing values
 missing_data <- is.na(data)
