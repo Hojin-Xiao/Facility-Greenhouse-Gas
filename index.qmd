@@ -1,28 +1,29 @@
 # Introduction
+
 ## Exploring the Impact of Greenhouse Gas Emissions from Large Facilities
 
 In an era where environmental consciousness is more than a mere trend but a necessity, the study of greenhouse gas emissions holds paramount importance. Our interest in addressing climate change and understanding its primary contributors led me to choose this topic for exploration. This project delves into the intricacies of greenhouse gas emissions from large facilities, leveraging two comprehensive datasets to unfold the hidden narratives and identify key trends.
 
 **Why This Topic?**
 
-The choice of this topic stems from a growing concern about the role of large facilities in global warming. These facilities, often industrial in nature, contribute significantly to the total greenhouse gas emissions, thereby affecting climate patterns, ecosystems, and health. By focusing on this area, the project aims to provide a clearer picture of where and how these emissions are generated, potentially guiding policies and practices towards a more sustainable future.
+The choice of this topic stems from a growing concern about the role of large facilities in global warming and other environmental concerns. These facilities, often industrial in nature, contribute significantly to the total greenhouse gas emissions, thereby affecting climate patterns, ecosystems, and health. By focusing on this area, the project aims to provide a clearer picture of where and how these emissions are generated, potentially guiding policies and practices towards a more sustainable future.**Due to impracticality and over complexity to collect global facility emission datasets, we will focus on solely on Canadian facility greenhouse gas emission in recent years to align with the purpose of this project.**
 
 **Datasets at a Glance**
 
-1. **Dataset 1: Greenhouse Gas Emissions from Large Facilities** - This dataset provides a detailed account of emissions from various large facilities. It includes data points such as the type of gases emitted, the quantity of emissions, and the geographical location of these facilities.
+1.  **Dataset 1: Greenhouse Gas Emissions from Large Facilities** - This dataset provides a general account of emissions from Canadian various large facilities in 2021. It includes data points such as the quantity of emissions, the geographical location of these facilities etc.
 
-2. **Dataset 2: Annual Greenhouse Gas Index (2004-Present)** - Offering a temporal perspective, this dataset tracks greenhouse gas emissions over time, providing valuable insights into trends, patterns, and changes in emission levels over the years.
+2.  **Dataset 2: Annual Greenhouse Gas Index (2004-Present)** - Offering a more detailed perspective as this dataset tracks greenhouse gas emissions over time from 2004 to 2021 with more elaborate information like different types of greenhouse gas, providing valuable insights into trends, patterns, and changes in emission levels over the years.
 
 **Research Questions**
 
-The project revolves around several key questions, including:
+The project revolves around several key questions, including but may not limited to:
 
-- What are the major types of greenhouse gases emitted by these facilities?
-- Which facilities contribute most significantly to these emissions?
-- How have emission patterns changed over time?
-- Are there any geographical hotspots for high levels of emissions?
-- Are there any significant regional variations in these emissions?
-- How do these emissions correlate with other environmental or economic factors?
+-   What are the major types of greenhouse gases emitted by these facilities?
+-   Which facilities contribute most significantly to these emissions?
+-   How have emission patterns changed over time?
+-   Are there any geographical hotspots for high levels of emissions?
+-   Are there any significant regional variations in these emissions?
+-   How do these emissions correlate with other environmental or economic factors?
 
 These questions aim to uncover the underlying patterns and relationships within the data, providing a foundation for deeper environmental analysis.
 
