@@ -1,5 +1,5 @@
 ---
-title: "Pset4"
+title: "Data"
 execute:
   echo: true
   warning: false
@@ -61,7 +61,7 @@ library(readr)
 library(dplyr)
 library(forcats)
 
-Fac_emis <- read_csv("C://Columbia_University//My_Courses//EDAV//Final_Project//Pset4//PDGES-GHGRP-GHGEmissionsGES-2004-Present.csv", locale=locale(encoding="latin1"))
+Fac_emis <- read_csv("PDGES-GHGRP-GHGEmissionsGES-2004-Present.csv", locale=locale(encoding="latin1"))
 
 data <- read.csv("Greenhouse gas emissions from large facilities.csv", na.strings = c("", "n/a", "N/A", "NA"))
 

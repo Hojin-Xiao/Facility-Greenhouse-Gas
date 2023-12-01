@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.3.450">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Haoyang Guan (hg2677)">
 <meta name="author" content="Xiao Wen (xw2943)">
-<meta name="dcterms.date" content="2023-11-28">
+<meta name="dcterms.date" content="2023-11-30">
 
 <title>Canadian Facility Greenhouse Gas Emission</title>
 <style>
@@ -59,7 +59,8 @@ ul.task-list li input[type="checkbox"] {
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 
@@ -78,7 +79,7 @@ ul.task-list li input[type="checkbox"] {
       <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
-      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -92,7 +93,7 @@ ul.task-list li input[type="checkbox"] {
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Canadian Facility Greenhouse Gas Emission</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/Hojin-Xiao/Facility-Greenhouse-Gas" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="https://github.com/Hojin-Xiao/Facility-Greenhouse-Gas" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
     </div>
       </div>
@@ -112,7 +113,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./data.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Pset4</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -143,7 +144,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a>
+  <ul class="collapse">
+  <li><a href="#exploring-the-impact-of-greenhouse-gas-emissions-from-large-facilities" id="toc-exploring-the-impact-of-greenhouse-gas-emissions-from-large-facilities" class="nav-link" data-scroll-target="#exploring-the-impact-of-greenhouse-gas-emissions-from-large-facilities"><span class="header-section-number">1.1</span> Exploring the Impact of Greenhouse Gas Emissions from Large Facilities</a></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/Hojin-Xiao/Facility-Greenhouse-Gas/edit/main/index.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/Hojin-Xiao/Facility-Greenhouse-Gas/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
@@ -170,7 +174,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 28, 2023</p>
+      <p class="date">November 30, 2023</p>
     </div>
   </div>
   
@@ -182,8 +186,33 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="introduction" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
+<section id="exploring-the-impact-of-greenhouse-gas-emissions-from-large-facilities" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="exploring-the-impact-of-greenhouse-gas-emissions-from-large-facilities"><span class="header-section-number">1.1</span> Exploring the Impact of Greenhouse Gas Emissions from Large Facilities</h2>
+<p>In an era where environmental consciousness is more than a mere trend but a necessity, the study of greenhouse gas emissions holds paramount importance. Our interest in addressing climate change and understanding its primary contributors led me to choose this topic for exploration. This project delves into the intricacies of greenhouse gas emissions from large facilities, leveraging two comprehensive datasets to unfold the hidden narratives and identify key trends.</p>
+<p><strong>Why This Topic?</strong></p>
+<p>The choice of this topic stems from a growing concern about the role of large facilities in global warming and other environmental concerns. These facilities, often industrial in nature, contribute significantly to the total greenhouse gas emissions, thereby affecting climate patterns, ecosystems, and health. By focusing on this area, the project aims to provide a clearer picture of where and how these emissions are generated, potentially guiding policies and practices towards a more sustainable future.<strong>Due to impracticality and over complexity to collect global facility emission datasets, we will focus on solely on Canadian facility greenhouse gas emission in recent years to align with the purpose of this project.</strong></p>
+<p><strong>Datasets at a Glance</strong></p>
+<ol type="1">
+<li><p><strong>Dataset 1: Greenhouse Gas Emissions from Large Facilities</strong> - This dataset provides a general account of emissions from Canadian various large facilities in 2021. It includes data points such as the quantity of emissions, the geographical location of these facilities etc.</p></li>
+<li><p><strong>Dataset 2: Annual Greenhouse Gas Index (2004-Present)</strong> - Offering a more detailed perspective as this dataset tracks greenhouse gas emissions over time from 2004 to 2021 with more elaborate information like different types of greenhouse gas, providing valuable insights into trends, patterns, and changes in emission levels over the years.</p></li>
+</ol>
+<p><strong>Research Questions</strong></p>
+<p>The project revolves around several key questions, including but may not limited to:</p>
+<ul>
+<li>What are the major types of greenhouse gases emitted by these facilities?</li>
+<li>Which facilities contribute most significantly to these emissions?</li>
+<li>How have emission patterns changed over time?</li>
+<li>Are there any geographical hotspots for high levels of emissions?</li>
+<li>Are there any significant regional variations in these emissions?</li>
+<li>How do these emissions correlate with other environmental or economic factors?</li>
+</ul>
+<p>These questions aim to uncover the underlying patterns and relationships within the data, providing a foundation for deeper environmental analysis.</p>
+<p><strong>Relevance for a Broader Audience</strong></p>
+<p>Understanding greenhouse gas emissions is crucial for a wide range of stakeholders, including policymakers, environmental scientists, and the general public. This project, through its exploratory data analysis and visualizations, intends to make this complex information accessible and insightful for everyone, irrespective of their background in environmental studies.</p>
+<p>By shedding light on this critical aspect of environmental science, this project not only contributes to academic discourse but also aids in informed decision-making at various levels, from individual choices to global policies.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -425,7 +454,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
   <div class="nav-page nav-page-next">
       <a href="./data.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Pset4</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
