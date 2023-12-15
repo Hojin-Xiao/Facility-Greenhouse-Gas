@@ -107,7 +107,10 @@ ggplot(top_facilities, aes(x = reorder(`Facility name`, `Total emissions`), y = 
   labs(title = "Top 30 Facilities by Greenhouse Gas Emissions",
        x = "Facility Name", y = "Total Emissions (tonnes)") +
   theme_minimal()
-
+library(jsonlite)
+bar_data = top_facilities%>%
+  select(`Facility name`,`Total emissions`)
+write_json(bar_data,"top_facilities.json")
 ```
 
 As we can see, the largest contributor is Mildred Lake and Aurora Plant Sites in 2021. Other high level emission facilities can also be found. 
@@ -284,8 +287,18 @@ bubble_map <- ggplot(df_all_factories, aes(x = Longitude, y = Latitude, size = `
   coord_fixed(1.3)  # Set a fixed aspect ratio to display the map correctly
 
 print(bubble_map)
-
+library(sf)
+library(jsonlite)
+library(geojsonsf)
+# Select relevant columns for the bubble map
+bubble_data <- df_all_factories %>%
+  select(Longitude, Latitude, `Total Emissions (tonnes CO2e) / Émissions totales (tonnes éq. CO2)`)
+colnames(bubble_data) = c("Longitude","Latitude","rate")
+# Write to a JSON file
+write_json(bubble_data, "bubble_data.json", pretty = TRUE)
 ```
+
+
 This bubble plot further confirms our finding that the lower latitude inland regions in Canada should account for the major greenhouse gas emission amount. 
 
 In these visualizations: - The choropleth map provides an overview of emissions by province. - The bubble map shows the precise locations of high-emission facilities.
@@ -318,6 +331,8 @@ ggplot(df_all_factories, aes(x = Longitude, y = Latitude, weights = `Total Emiss
        y="Latitude",
        title = "Greenhouse Gas Emission Amount",
        fill = "Emission Amount")
+
+
 
 
 ```

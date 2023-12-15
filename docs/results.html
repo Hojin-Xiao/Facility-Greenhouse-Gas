@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -61,6 +95,14 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script src="site_libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.2/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<script src="site_libs/jquery-3.5.1/jquery.min.js"></script>
+<link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet">
+<script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
 
 
 </head>
@@ -111,7 +153,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./data.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Pset4</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -160,6 +202,432 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(redav)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(statebins)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rlang)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rnaturalearth)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the datasets</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df_large_facilities <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/Greenhouse gas emissions from large facilities.csv"</span>, <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">encoding =</span> <span class="st">"ISO-8859-1"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df_all_factories <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/PDGES-GHGRP-GHGEmissionsGES-2004-Present.csv"</span>, <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">encoding =</span> <span class="st">"ISO-8859-1"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Q1: What are the major types of greenhouse gases emitted by these facilities?</p>
+<p>Given the variety of gases, we will focus on the total emissions (in CO2 equivalents) for each type of gas to understand their relative impact. The visualizations will include:</p>
+<ol type="1">
+<li>A bar chart showing the total emissions of each type of greenhouse gas:</li>
+</ol>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify the columns for different greenhouse gases</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ghg_columns <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">"tonnes CO2e"</span>, <span class="fu">names</span>(df_all_factories), <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>ghg_columns <span class="ot">&lt;-</span> ghg_columns[<span class="sc">!</span><span class="fu">grepl</span>(<span class="st">"Total"</span>, ghg_columns)]</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Summing up the emissions for each type of greenhouse gas</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>ghg_emissions <span class="ot">&lt;-</span> df_all_factories <span class="sc">%&gt;%</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(ghg_columns)) <span class="sc">%&gt;%</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">replace</span>(<span class="fu">is.na</span>(.), <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_all</span>(sum)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Transforming data for ggplot</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>ghg_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(ghg_emissions))</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>ghg_data <span class="ot">&lt;-</span> <span class="fu">rownames_to_column</span>(ghg_data, <span class="at">var =</span> <span class="st">"Gas"</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>ghg_data<span class="sc">$</span>Value <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(ghg_data<span class="sc">$</span>V1)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>ghg_data<span class="sc">$</span>Gas <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">" </span><span class="sc">\\</span><span class="st">(tonnes CO2e.*$"</span>, <span class="st">""</span>, ghg_data<span class="sc">$</span>Gas)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>ghg_data<span class="sc">$</span>proportion <span class="ot">&lt;-</span> <span class="fu">prop.table</span>(ghg_data<span class="sc">$</span>Value)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the mean and median</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>mean_value <span class="ot">&lt;-</span> <span class="fu">mean</span>(ghg_data<span class="sc">$</span>Value)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>median_value <span class="ot">&lt;-</span> <span class="fu">median</span>(ghg_data<span class="sc">$</span>Value)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Bar plot with auxiliary lines</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ghg_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Gas, <span class="sc">-</span>Value), <span class="at">y =</span> Value)) <span class="sc">+</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> mean_value, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span>  <span class="co"># Changed from size to linewidth</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Total Greenhouse Gas Emissions by Type (in CO2 equivalents)"</span>,</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Type of Greenhouse Gas"</span>, <span class="at">y =</span> <span class="st">"Total Emissions (tonnes CO2e)"</span>) <span class="sc">+</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> mean_value, <span class="at">label =</span> <span class="fu">paste</span>(<span class="st">"Mean:"</span>, <span class="fu">round</span>(mean_value, <span class="dv">2</span>)), <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.1</span>, <span class="at">color =</span> <span class="st">"red"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We can observe that without plotting CO2 (which is the largest greenhouse gas), other main types of greenhouse gas emitted by the facilities are CH4, N2O, CF4, SF4 etc.</p>
+<ol start="2" type="1">
+<li>A Cleveland plot to show the relative proportion of emission for each greenhouse gas</li>
+</ol>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ghg_data,<span class="fu">aes</span>(<span class="at">x =</span> proportion, <span class="at">y=</span><span class="fu">fct_reorder</span>(<span class="fu">factor</span>(Gas), proportion)))<span class="sc">+</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Emission Proportion"</span>)<span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Greenhouse Gas Types"</span>)<span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Emission Proportion of each Greenhouse Gas"</span>)<span class="sc">+</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"lightgreen"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>This confirms our finding that CH4, N2O, and CF4 will take up the majority of greenhouse gas emission amount without taking the most substantial CO2 into account.</p>
+<p>Bar Chart - Total Greenhouse Gas Emissions by Type (in CO2 equivalents): This chart shows the total emissions of each type of greenhouse gas. It helps in identifying the gases with the highest emissions.</p>
+<p>Cleveland Plot - Proportion of Each Greenhouse Gas in Total Emissions: This chart illustrates the relative proportions of different greenhouse gases in the total emissions. It provides a clear view of the relative contribution of each gas to the overall emissions.</p>
+<p>Q2: Which facilities contribute most significantly to these emissions?</p>
+<p>To address the question of which facilities contribute most significantly to greenhouse gas emissions, we can analyze the two datasets with respect to facility-level emissions data. For this analysis, we will create three types of visualizations:</p>
+<ol type="1">
+<li>Bar Chart of Top Emitting Facilities: This chart, focusing on the facility emission dataset in 2021, will show the facilities with the highest total greenhouse gas emissions. It’s a straightforward way to identify the biggest contributors.</li>
+</ol>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove any non-numeric characters (like commas or text), then convert to numeric</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df_large_facilities<span class="sc">$</span><span class="st">`</span><span class="at">Total emissions</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">"[^0-9</span><span class="sc">\\</span><span class="st">.]"</span>, <span class="st">""</span>, df_large_facilities<span class="sc">$</span><span class="st">`</span><span class="at">Total emissions</span><span class="st">`</span>, <span class="at">perl =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Handle cases where there might be NA values after conversion</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>df_large_facilities <span class="ot">&lt;-</span> df_large_facilities <span class="sc">%&gt;%</span> </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(<span class="st">`</span><span class="at">Total emissions</span><span class="st">`</span>))</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Selecting the top 100 facilities by total emissions</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>top_facilities <span class="ot">&lt;-</span> df_large_facilities <span class="sc">%&gt;%</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(<span class="st">`</span><span class="at">Total emissions</span><span class="st">`</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">30</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating the bar chart</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(top_facilities, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(<span class="st">`</span><span class="at">Facility name</span><span class="st">`</span>, <span class="st">`</span><span class="at">Total emissions</span><span class="st">`</span>), <span class="at">y =</span> <span class="st">`</span><span class="at">Total emissions</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Top 30 Facilities by Greenhouse Gas Emissions"</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Facility Name"</span>, <span class="at">y =</span> <span class="st">"Total Emissions (tonnes)"</span>) <span class="sc">+</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jsonlite)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'jsonlite' was built under R version 4.3.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'jsonlite'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:rlang':
+
+    flatten, unbox</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>bar_data <span class="ot">=</span> top_facilities<span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">`</span><span class="at">Facility name</span><span class="st">`</span>,<span class="st">`</span><span class="at">Total emissions</span><span class="st">`</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write_json</span>(bar_data,<span class="st">"top_facilities.json"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>As we can see, the largest contributor is Mildred Lake and Aurora Plant Sites in 2021. Other high level emission facilities can also be found.</p>
+<ol start="2" type="1">
+<li>Heatmap of Emissions by Facility and Gas Type: This will be a more complex visualization ,showing the contribution of each gas type by each top-emitting facility. It still considers all the facility emission on 2021 but in this case provides a more detailed breakdown of emissions (therefore using the second dataset df_all_factories containing the gas breakdown of the toal emission).</li>
+</ol>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter and select relevant columns for the top facilities</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>top_facilities_detailed <span class="ot">&lt;-</span> df_all_factories <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">Facility Name / Nom de l'installation</span><span class="st">`</span> <span class="sc">%in%</span> top_facilities<span class="sc">$</span><span class="st">`</span><span class="at">Facility name</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">`</span><span class="at">Facility Name / Nom de l'installation</span><span class="st">`</span>, <span class="st">`</span><span class="at">CO2 (tonnes)</span><span class="st">`</span>, <span class="st">`</span><span class="at">CH4 (tonnes)</span><span class="st">`</span>, <span class="st">`</span><span class="at">N2O (tonnes)</span><span class="st">`</span>, <span class="st">`</span><span class="at">SF6 (tonnes)</span><span class="st">`</span>, <span class="st">`</span><span class="at">HFC-134a (tonnes)</span><span class="st">`</span>, <span class="st">`</span><span class="at">C2F6 (tonnes)</span><span class="st">`</span>) <span class="sc">%&gt;%</span>  <span class="co"># Corrected the column name</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span><span class="st">`</span><span class="at">Facility Name / Nom de l'installation</span><span class="st">`</span>, <span class="at">names_to =</span> <span class="st">"Gas"</span>, <span class="at">values_to =</span> <span class="st">"Emissions"</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating the heatmap</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(top_facilities_detailed, <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">Facility Name / Nom de l'installation</span><span class="st">`</span>, <span class="at">y =</span> Gas, <span class="at">fill =</span> Emissions)) <span class="sc">+</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">"blue"</span>, <span class="at">high =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Emissions Breakdown by Facility and Gas Type"</span>,</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Facility Name"</span>, <span class="at">y =</span> <span class="st">"Type of Gas"</span>) <span class="sc">+</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>In our case, the heatmap will display emissions data by gas type for each top-emitting facility. Here’s how to interpret the heatmap in the context of Q2:</p>
+<ol type="1">
+<li><p>Axis Labels: The x-axis represents the facility names. The y-axis represents the different types of greenhouse gases (e.g., CO2, NO2, etc.)</p></li>
+<li><p>Color Intensity: The color intensity in each cell of the heatmap corresponds to the emission levels. Typically, if the cell color is more close to red, it signifies higher levels of emission while if the cell color tends to blue, it signifies lower level of emission for certain gas.</p></li>
+<li><p>Interpreting the Data: Locate facilities with cell color more close to red, then these are the facilities contributing significantly to overall emissions. Identify which gas types have the deepest red cells across facilities. These are the gases that contribute most to emissions at each facility. We can also compare facilities to see if certain ones have higher emissions for specific gases.</p></li>
+<li><p>Contextual Understanding: The heatmap provides a comparative view. It shows how each facility’s emissions for each gas type compare to others. For instance, we can observe that even if the facility Mildred Lake and Aurora Plant Sites has the highest total emission, its emission amount is largely concentrated on CO2. When it comes to other types of gas like NO2 and CH4, it doesn’t evince a prominent lead compared with other facilities.</p></li>
+<li><p>Lastly, serving as one extension to the question Q2, we consider all years from 2004 to 2021 and this time we show the total amount of greenhouse gas based on the industrial sectors (English Facility NAICS Code Description) rather than specific facilities.</p></li>
+</ol>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>group_facility <span class="ot">&lt;-</span> df_all_factories <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">Reference Year / Année de référence</span><span class="st">`</span>, <span class="st">`</span><span class="at">English Facility NAICS Code Description / Description du code SCIAN de l'installation en anglais</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_emission =</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">Total Emissions (tonnes CO2e) / Émissions totales (tonnes éq. CO2)</span><span class="st">`</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_emission)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'Reference Year / Année de référence'. You
+can override using the `.groups` argument.</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(group_facility, <span class="fu">aes</span>(<span class="at">x =</span> total_emission, <span class="at">y=</span><span class="fu">fct_reorder</span>(<span class="fu">factor</span>(<span class="st">`</span><span class="at">English Facility NAICS Code Description / Description du code SCIAN de l'installation en anglais</span><span class="st">`</span>), total_emission)))<span class="sc">+</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill=</span><span class="st">'steelblue'</span>)<span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Emission Amount"</span>) <span class="sc">+</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Industrial Sectors"</span>) <span class="sc">+</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span><span class="st">`</span><span class="at">Reference Year / Année de référence</span><span class="st">`</span>) <span class="sc">+</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>According to the facet bar chart, the major industrial sectors producing the most greenhouse gas are always the same across these years (Fossil-Fuel Electric Power Generation, Oil&amp;Sand extraction, Petroleum Refine etc.) Also, even if the Fossil-Fuel Electric Power Generation sector always produces the highest amount of greenhouse gas emission each year, the specific amount of emission shows a decreasing trend from 2004 to 2021. Under the consideration that this sector is at the top of emission amount, this decreasing trend could be explained by more and more government regulation.</p>
+<p>Q3: How have emission patterns changed over time?</p>
+<p>To analyze and visualize how emission patterns have changed over time, we can create visualizations that show trends in emissions over the years. Here we present two types of visualizations that can effectively convey this information from certain angles:</p>
+<ol type="1">
+<li>Time Series Plot: This plot will show the trend of total emissions over time. It’s a straightforward way to see how the trend of emissions have changed year by year.</li>
+</ol>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>sum_each_year <span class="ot">&lt;-</span> df_all_factories <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">Reference Year / Année de référence</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">EmissionSum =</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">Total Emissions (tonnes CO2e) / Émissions totales (tonnes éq. CO2)</span><span class="st">`</span>))</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ly</span>(sum_each_year, <span class="at">x =</span> <span class="sc">~</span><span class="st">`</span><span class="at">Reference Year / Année de référence</span><span class="st">`</span>, <span class="at">y =</span> <span class="sc">~</span>EmissionSum, <span class="at">type =</span> <span class="st">'scatter'</span>, <span class="at">mode =</span> <span class="st">'lines+markers'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layout</span>(<span class="at">title =</span> <span class="st">'Emission across the Years'</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">xaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">'Years'</span>),</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">'Emission Amount'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-e188efd67ec5b92cef6c" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-e188efd67ec5b92cef6c">{"x":{"visdat":{"6eece16491c":["function () ","plotlyVisDat"]},"cur_data":"6eece16491c","attrs":{"6eece16491c":{"x":{},"y":{},"mode":"lines+markers","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Emission across the Years","xaxis":{"domain":[0,1],"automargin":true,"title":"Years"},"yaxis":{"domain":[0,1],"automargin":true,"title":"Emission Amount"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021],"y":[278385637.967417,277996614.170205,271940209.28367698,277329425.78477901,263371011.90832201,253113023.73297799,263648515.789727,256150054.28030398,259403904.783553,261073791.126899,264137790.55024299,264492654.46450499,264374300.821051,293971353.35221398,294607520.915564,294712236.619744,274738811.43155402,285440782.88752699],"mode":"lines+markers","type":"scatter","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>This interactive time series plot shows the pattern of Canadian facility total emission amount of greenhouse gas from 2004 to 2021. The facility total emission approximately dropped from 280M to 260M on 2007 and maintained around this amount until 2016 when it rised again to almost 300M. As a matter of fact, we can further analyze this trend by displaying the total emission amount regarding to each province in Canada.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>Province_sum_Year <span class="ot">&lt;-</span> df_all_factories <span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">Facility Province or Territory / Province ou territoire de l'installation</span><span class="st">`</span>, <span class="st">`</span><span class="at">Reference Year / Année de référence</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">EmissionSum =</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">Total Emissions (tonnes CO2e) / Émissions totales (tonnes éq. CO2)</span><span class="st">`</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'Facility Province or Territory / Province
+ou territoire de l'installation'. You can override using the `.groups`
+argument.</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ly</span>(Province_sum_Year, <span class="at">x =</span> <span class="sc">~</span><span class="st">`</span><span class="at">Reference Year / Année de référence</span><span class="st">`</span>, <span class="at">y =</span> <span class="sc">~</span>EmissionSum, <span class="at">color =</span> <span class="sc">~</span><span class="st">`</span><span class="at">Facility Province or Territory / Province ou territoire de l'installation</span><span class="st">`</span>, <span class="at">type =</span> <span class="st">'scatter'</span>, <span class="at">mode =</span> <span class="st">'lines+markers'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layout</span>(<span class="at">title =</span> <span class="st">'Yearly Emission Value for each Province'</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">xaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">'Years'</span>),</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">'Emission Value'</span>),</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">showlegend =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in RColorBrewer::brewer.pal(N, "Set2"): n too large, allowed maximum for palette Set2 is 8
+Returning the palette you asked for with that many colors
+
+Warning in RColorBrewer::brewer.pal(N, "Set2"): n too large, allowed maximum for palette Set2 is 8
+Returning the palette you asked for with that many colors</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-103f38d2abfb9670d51b" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-103f38d2abfb9670d51b">{"x":{"visdat":{"6eec2ddc1452":["function () ","plotlyVisDat"]},"cur_data":"6eec2ddc1452","attrs":{"6eec2ddc1452":{"x":{},"y":{},"mode":"lines+markers","color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Yearly Emission Value for each Province","xaxis":{"domain":[0,1],"automargin":true,"title":"Years"},"yaxis":{"domain":[0,1],"automargin":true,"title":"Emission Value"},"showlegend":true,"hovermode":"closest"},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021],"y":[107672329.08935,106918237.82492,113851195.13628399,112409043.38660499,110703828.23099001,118087284.25519399,123251973.17877001,123934989.806113,126890290.04184599,132507698.039612,139201145.595893,141051709.697052,140653145.81187701,158506843.739124,156964407.76274699,157161353.37179199,147937526.63673499,150969944.18291199],"mode":"lines+markers","type":"scatter","name":"Alberta","marker":{"color":"rgba(102,194,165,1)","line":{"color":"rgba(102,194,165,1)"}},"textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"line":{"color":"rgba(102,194,165,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021],"y":[14732159.1821,14018200.514265001,12744989.204209,13073148.379548,13429479.827683,13609824.550959,14174804.616618,14745028.25917,14658445.974216999,15177907.24254,14724817.034329999,13831596.834796,13520180.78036,16746403.217731999,16250845.532408999,16765118.3738,16402498.740514999,16572767.574281],"mode":"lines+markers","type":"scatter","name":"British Columbia","marker":{"color":"rgba(204,167,126,1)","line":{"color":"rgba(204,167,126,1)"}},"textfont":{"color":"rgba(204,167,126,1)"},"error_y":{"color":"rgba(204,167,126,1)"},"error_x":{"color":"rgba(204,167,126,1)"},"line":{"color":"rgba(204,167,126,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021],"y":[2560036.4490999999,2907763.8487,2520691.0642200001,2484074.4890490002,2361646.6727,2141642.9470790001,1890133.4650980001,2019979.778955,1889089.032436,2037928.157936,1961438.3431800001,2095400.9724039999,1836026.7788209999,2413033.7383099999,2593293.4304599999,2565733.67185,2466458.0914500002,2610046.60604],"mode":"lines+markers","type":"scatter","name":"Manitoba","marker":{"color":"rgba(238,145,116,1)","line":{"color":"rgba(238,145,116,1)"}},"textfont":{"color":"rgba(238,145,116,1)"},"error_y":{"color":"rgba(238,145,116,1)"},"error_x":{"color":"rgba(238,145,116,1)"},"line":{"color":"rgba(238,145,116,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021],"y":[12979244.27871,12653652.592,10234023.135895001,10910133.645810001,10287060.58962,10120608.468040001,8230716.0317700002,7864798.19515,7214205.9434000002,7517832.4407500001,7556874.7389899995,7260000.6460800003,7795519.0904400004,6978614.6363399997,7009947.1237500003,6804589.6347200004,6085513.6548349997,6590523.233302],"mode":"lines+markers","type":"scatter","name":"New Brunswick","marker":{"color":"rgba(178,156,177,1)","line":{"color":"rgba(178,156,177,1)"}},"textfont":{"color":"rgba(178,156,177,1)"},"error_y":{"color":"rgba(178,156,177,1)"},"error_x":{"color":"rgba(178,156,177,1)"},"line":{"color":"rgba(178,156,177,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021],"y":[5388416.0299000004,5398174.8881999999,4975368.9012000002,5448217.8241999997,5290506.7942000004,4392257.4416399999,4560159.5123600001,4267238.24921,4345910.0362499999,4370561.0580099998,4677639.5218500001,4804955.7709400002,5434786.2823999999,5812893.8957000002,5432180.9006000003,5708233.1741599999,3858956.3165000002,3402133.6305399998],"mode":"lines+markers","type":"scatter","name":"Newfoundland and Labrador","marker":{"color":"rgba(175,154,200,1)","line":{"color":"rgba(175,154,200,1)"}},"textfont":{"color":"rgba(175,154,200,1)"},"error_y":{"color":"rgba(175,154,200,1)"},"error_x":{"color":"rgba(175,154,200,1)"},"line":{"color":"rgba(175,154,200,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021],"y":[366550.07550000004,360402.58980000002,320431.49809999997,521820.44699999999,533452.03429999994,589935.77684599999,545027.55290000001,554957.74650000001,549781.96380000003,591377.04059999995,576429.58700000006,668965.00258999993,570022.14775999996,574592.77630000003,610584.65888999996,609509.04972999997,487961.49369999999,559921.86051000003],"mode":"lines+markers","type":"scatter","name":"Northwest Territories","marker":{"color":"rgba(224,140,196,1)","line":{"color":"rgba(224,140,196,1)"}},"textfont":{"color":"rgba(224,140,196,1)"},"error_y":{"color":"rgba(224,140,196,1)"},"error_x":{"color":"rgba(224,140,196,1)"},"line":{"color":"rgba(224,140,196,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021],"y":[11778042.667300001,11751279.156299999,10809721.153100001,11420755.584519999,11109785.1744,10787904.00598,10614842.38462,9879027.422629999,8826049.678030001,9130143.9422800001,7828643.0476200003,7610131.3357600002,7795442.0709000006,7574462.1024899995,7849645.26951,7554499.51516,7128237.74156,6719514.49529],"mode":"lines+markers","type":"scatter","name":"Nova Scotia","marker":{"color":"rgba(205,180,144,1)","line":{"color":"rgba(205,180,144,1)"}},"textfont":{"color":"rgba(205,180,144,1)"},"error_y":{"color":"rgba(205,180,144,1)"},"error_x":{"color":"rgba(205,180,144,1)"},"line":{"color":"rgba(205,180,144,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021],"y":[134626.45800000001,198797.93818,203299.95000000001,195520.35000000001,179859,187192.19,260336.14245000001,382888.65500000003,507019.23875999998,600838.91452999995,625306.43533999997,586072.17159000004],"mode":"lines+markers","type":"scatter","name":"Nunavut","marker":{"color":"rgba(174,216,81,1)","line":{"color":"rgba(174,216,81,1)"}},"textfont":{"color":"rgba(174,216,81,1)"},"error_y":{"color":"rgba(174,216,81,1)"},"error_x":{"color":"rgba(174,216,81,1)"},"line":{"color":"rgba(174,216,81,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021],"y":[76989944.856555,78701595.398100004,71579611.112299994,74347601.859781995,67341286.350446999,50078420.130640998,56256358.781511001,49700566.155224003,50294983.528205998,45667079.343709998,43205527.440248996,42081558.146647997,41714855.637079999,43076725.858167998,45748687.554318003,44921479.728139997,42347626.218024001,46093463.482254997],"mode":"lines+markers","type":"scatter","name":"Ontario","marker":{"color":"rgba(227,217,62,1)","line":{"color":"rgba(227,217,62,1)"}},"textfont":{"color":"rgba(227,217,62,1)"},"error_y":{"color":"rgba(227,217,62,1)"},"error_x":{"color":"rgba(227,217,62,1)"},"line":{"color":"rgba(227,217,62,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021],"y":[107000,104329.8,99608.362810000006,101965.76089999999,98589,74103,62811,65119.370000000003,52671.721089999999,59549.052519999997,55494.262369999997,50331.511720000002,55106.910779999998,99580.453000000009,95696.118835000001,83191.885899999994,78989.223299999998,91347.741999999998],"mode":"lines+markers","type":"scatter","name":"Prince Edward Island","marker":{"color":"rgba(250,212,80,1)","line":{"color":"rgba(250,212,80,1)"}},"textfont":{"color":"rgba(250,212,80,1)"},"error_y":{"color":"rgba(250,212,80,1)"},"error_x":{"color":"rgba(250,212,80,1)"},"line":{"color":"rgba(250,212,80,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021],"y":[23630961.148603,22571894.739319999,22686698.335659001,23610248.592879999,20279730.039581999,20758919.677997001,21053855.717269,20432689.511837002,20904489.333918002,20021249.146092001,20264432.644931,19908958.626104999,19609385.511225,22770804.854940001,21974004.04645,22542135.382477,21745755.598165002,22586775.721687],"mode":"lines+markers","type":"scatter","name":"Quebec","marker":{"color":"rgba(234,199,134,1)","line":{"color":"rgba(234,199,134,1)"}},"textfont":{"color":"rgba(234,199,134,1)"},"error_y":{"color":"rgba(234,199,134,1)"},"error_x":{"color":"rgba(234,199,134,1)"},"line":{"color":"rgba(234,199,134,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021],"y":[22180954.190299001,22611082.818599999,22117871.379900001,23002415.814484999,21935647.194400001,22460388.580682002,22861571.975580998,22474821.807944998,23562120.52132,23784578.350889001,23893259.02036,24929974.930190001,25117279.633527998,29004495.504889999,29524470.064174999,29348872.397284999,25515639.081409998,28608759.04972],"mode":"lines+markers","type":"scatter","name":"Saskatchewan","marker":{"color":"rgba(209,189,161,1)","line":{"color":"rgba(209,189,161,1)"}},"textfont":{"color":"rgba(209,189,161,1)"},"error_y":{"color":"rgba(209,189,161,1)"},"error_x":{"color":"rgba(209,189,161,1)"},"line":{"color":"rgba(209,189,161,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021],"y":[11734.897919999999,11635.115229999999,12040.03939,12567.05904,12366.961960000001,12230.313469999999,11878.800219999999,12214.023429999999,30013.92022,46739.214659999998,46681.520199999999,58342.200020000004,49513.1374],"mode":"lines+markers","type":"scatter","name":"Yukon","marker":{"color":"rgba(179,179,179,1)","line":{"color":"rgba(179,179,179,1)"}},"textfont":{"color":"rgba(179,179,179,1)"},"error_y":{"color":"rgba(179,179,179,1)"},"error_x":{"color":"rgba(179,179,179,1)"},"line":{"color":"rgba(179,179,179,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>The trend we can observe is the facility emission amount of Alberta shows an increasing trend from 2004 to 2021 whereas the emission amount in the province Ontario shows a decreasing trend even if this decreasing trend seems to halt after 2015. Other Canadian provinces have less emission amount (ranging from 0 to 30M) compared with these two provinces and they do not have much variation in their emission amount across these years.</p>
+<ol start="2" type="1">
+<li>Stacked Area Chart: This chart will display the breakdown of emissions by gas type over time, allowing you to see not only the total emissions but also how the composition of emissions has changed.</li>
+</ol>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the year column and gas columns</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>year_column <span class="ot">&lt;-</span> <span class="st">"Reference Year / Année de référence"</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>gas_columns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"CH4 (tonnes)"</span>, <span class="st">"N2O (tonnes)"</span>, <span class="st">"CF4 (tonnes)"</span>, <span class="st">"SF6 (tonnes)"</span>, <span class="st">"HFC-134a (tonnes)"</span>, <span class="st">"C2F6 (tonnes)"</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>year_col <span class="ot">&lt;-</span> <span class="fu">sym</span>(year_column)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>gas_col <span class="ot">&lt;-</span> <span class="fu">sym</span>(<span class="st">"CO2 (tonnes)"</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>long_format <span class="ot">&lt;-</span> df_all_factories <span class="sc">%&gt;%</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">!!</span>year_col, <span class="sc">!!</span>gas_col) <span class="sc">%&gt;%</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-!!</span>year_col, <span class="at">names_to =</span> <span class="st">"Gas"</span>, <span class="at">values_to =</span> <span class="st">"Emissions"</span>)</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(gas_column <span class="cf">in</span> gas_columns) {</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>  gas_col <span class="ot">&lt;-</span> <span class="fu">sym</span>(gas_column)</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>  new_long_format <span class="ot">&lt;-</span> df_all_factories <span class="sc">%&gt;%</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">!!</span>year_col, <span class="sc">!!</span>gas_col) <span class="sc">%&gt;%</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-!!</span>year_col, <span class="at">names_to =</span> <span class="st">"Gas"</span>, <span class="at">values_to =</span> <span class="st">"Emissions"</span>)</span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>  long_format <span class="ot">&lt;-</span> <span class="fu">rbind</span>(long_format, new_long_format)</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(long_format, <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">Reference Year / Année de référence</span><span class="st">`</span>, <span class="at">y =</span> Emissions, <span class="at">fill =</span> Gas)) <span class="sc">+</span></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_area</span>(<span class="at">position =</span> <span class="st">'stack'</span>) <span class="sc">+</span></span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste</span>(<span class="st">"Different Types of Facility Emission Over Time"</span>),</span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Emissions (tonnes)"</span>) <span class="sc">+</span></span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Gas, <span class="at">scale=</span><span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Spectral"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>From the 7 gases we showed above, we can observe some interesting patterns that CO2 emission drops substantially roughly after 2013, CH4 emission amount has increased since 2011, C2F6 and CF4 never play an important role in greenhouse gas emission amount etc.</p>
+<p>In these visualizations: - The time series plot provides a clear view of the overall trend in emissions. - The stacked area chart shows how the proportion of different gases in the total emissions has evolved over time.</p>
+<p>Q4: Are there any geographical hotspots for high levels of emissions?</p>
+<p>To analyze and visualize geographical hotspots for high levels of emissions, we can create maps that highlight areas with significant emission levels. Since we have emissions data from large facilities in Canada, we can use this data along with the geographical coordinates (latitude and longitude) of each facility to create these visualizations.</p>
+<p>Here are the visualizations we can create:</p>
+<ol type="1">
+<li>Choropleth Map: This map will color-code Canadian provinces or territories based on the total emissions from facilities within each region.</li>
+</ol>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load geographical data for Canadian provinces</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>canada_provinces <span class="ot">&lt;-</span> <span class="fu">ne_states</span>(<span class="at">country =</span> <span class="st">"canada"</span>, <span class="at">returnclass =</span> <span class="st">"sf"</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate emissions by province</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>emissions_by_province <span class="ot">&lt;-</span> df_all_factories <span class="sc">%&gt;%</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">Facility Province or Territory / Province ou territoire de l'installation</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Total_Emissions =</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">Total Emissions (tonnes CO2e) / Émissions totales (tonnes éq. CO2)</span><span class="st">`</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Join with geographical data</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>map_data <span class="ot">&lt;-</span> <span class="fu">left_join</span>(canada_provinces, emissions_by_province, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"name"</span> <span class="ot">=</span> <span class="st">"Facility Province or Territory / Province ou territoire de l'installation"</span>))</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the choropleth map</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>choropleth_map <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(map_data) <span class="sc">+</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> Total_Emissions)) <span class="sc">+</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">name =</span> <span class="st">"Total Emissions</span><span class="sc">\n</span><span class="st">(tonnes CO2e)"</span>) <span class="sc">+</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Total Emissions by Province in Canada"</span>) <span class="sc">+</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(choropleth_map)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We can observe that the major emission is concentrated on lower latitudes in the inland provinces like Alberta, Ontario, Saskatchewan etc.</p>
+<ol start="2" type="1">
+<li>Bubble Map: This map will plot each facility as a bubble on a map of Canada, with the bubble size representing the emission levels of each facility.</li>
+</ol>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create bubble charts showing emissions per facility</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>bubble_map <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_all_factories, <span class="fu">aes</span>(<span class="at">x =</span> Longitude, <span class="at">y =</span> Latitude, <span class="at">size =</span> <span class="st">`</span><span class="at">Total Emissions (tonnes CO2e) / Émissions totales (tonnes éq. CO2)</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span>  <span class="co"># Set transparency and color</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">10</span>)) <span class="sc">+</span>  <span class="co"># Adjust bubble size</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Geographical Hotspots of Emissions in Canada"</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Longitude"</span>, <span class="at">y =</span> <span class="st">"Latitude"</span>,</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">size =</span> <span class="st">"Emission Level"</span>) <span class="sc">+</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>(<span class="fl">1.3</span>)  <span class="co"># Set a fixed aspect ratio to display the map correctly</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(bubble_map)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jsonlite)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geojsonsf)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Select relevant columns for the bubble map</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>bubble_data <span class="ot">&lt;-</span> df_all_factories <span class="sc">%&gt;%</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Longitude, Latitude, <span class="st">`</span><span class="at">Total Emissions (tonnes CO2e) / Émissions totales (tonnes éq. CO2)</span><span class="st">`</span>)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(bubble_data) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Longitude"</span>,<span class="st">"Latitude"</span>,<span class="st">"rate"</span>)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Write to a JSON file</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="fu">write_json</span>(bubble_data, <span class="st">"bubble_data.json"</span>, <span class="at">pretty =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>This bubble plot further confirms our finding that the lower latitude inland regions in Canada should account for the major greenhouse gas emission amount.</p>
+<p>In these visualizations: - The choropleth map provides an overview of emissions by province. - The bubble map shows the precise locations of high-emission facilities.</p>
+<p>As an extension to this question Q4, we can further investigate if there is any regional emission variation across these years</p>
+<ol start="3" type="1">
+<li>Hexagonal heatmap: facet by years, this hexagonal plot shows the number of facility emission reports collected based on different regions in Canada.</li>
+</ol>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_all_factories, <span class="fu">aes</span>(<span class="at">x =</span> Longitude, <span class="at">y =</span> Latitude))<span class="sc">+</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hex</span>(<span class="at">binwidth =</span> <span class="dv">10</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)<span class="sc">+</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_distiller</span>(<span class="at">palette =</span> <span class="st">"Reds"</span>, <span class="at">direction =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Longitude"</span>)<span class="sc">+</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Latitude"</span>)<span class="sc">+</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span><span class="st">`</span><span class="at">Reference Year / Année de référence</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Hexagonal Heatmap of bin Counts"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>$title
+[1] "Hexagonal Heatmap of bin Counts"
+
+attr(,"class")
+[1] "labels"</code></pre>
+</div>
+</div>
+<p>Number of facility emission reports being collected is higher at the southern part of Canada(regions of low latitude). Moreover, based on the facet hex plot, this variation becomes more noticeable and distinct year over year, which means the more greenhouse gas emission facilities are established in the south than in the north. Therefore, this might explain why we saw the phenomenon that majority of facility emission is concentrated in the south. If we further explore the specific amount of greenhouse gas emission:</p>
+<ol start="4" type="1">
+<li>Square heatmap: this heatmap will show how the facility emission amount evolved over the year regarding to different regions in Canada.</li>
+</ol>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_all_factories, <span class="fu">aes</span>(<span class="at">x =</span> Longitude, <span class="at">y =</span> Latitude, <span class="at">weights =</span> <span class="st">`</span><span class="at">Total Emissions (tonnes CO2e) / Émissions totales (tonnes éq. CO2)</span><span class="st">`</span>)) <span class="sc">+</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bin2d</span>(<span class="at">bins =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_distiller</span>(<span class="at">palette =</span> <span class="st">"Reds"</span>, <span class="at">direction =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span><span class="st">`</span><span class="at">Reference Year / Année de référence</span><span class="st">`</span>) <span class="sc">+</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Longitude"</span>,</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Latitude"</span>,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Greenhouse Gas Emission Amount"</span>,</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Emission Amount"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="results_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The heatmap confirms our previous finding that the southern and middle regions (lower latitudes and in-between longitudes) have more greenhouse gas emission, but it also shows that along with the increase of the number of facilities(increased number of facility emission reports), the facility emission amount in the southern regions did increase but not in a very significant way as we compare the regions with high latitudes and low latitudes.</p>
 
 
 
@@ -400,7 +868,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./data.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Pset4</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

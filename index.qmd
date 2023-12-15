@@ -22,8 +22,7 @@ The project revolves around several key questions, including but may not limited
 -   Which facilities contribute most significantly to these emissions?
 -   How have emission patterns changed over time?
 -   Are there any geographical hotspots for high levels of emissions?
--   Are there any significant regional variations in these emissions?
--   How do these emissions correlate with other environmental or economic factors?
+
 
 These questions aim to uncover the underlying patterns and relationships within the data, providing a foundation for deeper environmental analysis.
 

@@ -7,6 +7,8 @@
 </style> 
 
 <div id="plot">
+<button id="increase">Increase Data</button>
+<button id="decrease">Decrease Data</button>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
