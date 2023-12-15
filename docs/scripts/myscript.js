@@ -1,70 +1,58 @@
-// Global variable to store and modify data
+// 全局变量来存储和修改数据
 var allData = [];
-var currentDataCount = 20;
 
-// Function to create a bar chart
-function createBarChart(data) {
-    var width = 960, height = 500;
-    var margin = { top: 20, right: 20, bottom: 30, left: 200 };
+// D3.js 创建气泡图的函数
+function createBubbleMap(data) {
+    var width = 960, height = 600;
 
-    // Clear any existing SVG elements
-    d3.select("#bar-chart").selectAll("*").remove();
+    // 清空现有的 SVG 元素
+    d3.select("#bubble-map").selectAll("*").remove();
 
-    // Create SVG element
-    var svg = d3.select("#bar-chart").append("svg")
+    // 创建 SVG 元素
+    var svg = d3.select("#bubble-map").append("svg")
         .attr("width", width)
-        .attr("height", height)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+        .attr("height", height);
 
-    // Define scales
-    var x = d3.scaleLinear()
-        .range([0, width - margin.left - margin.right])
-        .domain([0, d3.max(data, d => d["Total emissions"])]);
+    // 定义投影
+    var projection = d3.geoMercator()
+        .center([-106.3468, 56.1304]) // 以加拿大为中心
+        .scale(300)
+        .translate([width / 2, height / 2]);
 
-    var y = d3.scaleBand()
-        .range([height - margin.top - margin.bottom, 0])
-        .domain(data.map(d => d["Facility name"]))
-        .padding(0.1);
+    // 定义气泡大小的比例尺
+    var size = d3.scaleSqrt()
+        .domain([0, d3.max(data, d => d.rate)])
+        .range([1, 20]);
 
-    // Draw bars
-    svg.selectAll(".bar")
+    // 绘制气泡
+    svg.selectAll("circle")
         .data(data)
-        .enter().append("rect")
-        .attr("class", "bar")
-        .attr("x", 0)
-        .attr("y", d => y(d["Facility name"]))
-        .attr("width", d => x(d["Total emissions"]))
-        .attr("height", y.bandwidth())
-        .attr("fill", "steelblue");
-
-    // Add x-axis
-    svg.append("g")
-        .attr("transform", `translate(0,${height - margin.top - margin.bottom})`)
-        .call(d3.axisBottom(x));
-
-    // Add y-axis
-    svg.append("g")
-        .call(d3.axisLeft(y));
+        .enter().append("circle")
+        .attr("cx", d => projection([d.Longitude, d.Latitude])[0])
+        .attr("cy", d => projection([d.Longitude, d.Latitude])[1])
+        .attr("r", d => size(d.rate))
+        .style("fill", "red")
+        .attr("opacity", 0.6);
 }
 
-// Load initial data
-d3.json("C:/Users/haoya/OneDrive/桌面\Facility-Greenhouse-Gas/data/top_facilities.json").then(function(data) {
+// 加载初始数据
+d3.json("bubble_data.json").then(function(data) {
     allData = data;
-    createBarChart(allData.slice(0, currentDataCount));
+    console.log(allData);
+    createBubbleMap(data);
 });
 
-// Function to update data
+// 按钮点击事件处理函数
 function updateData(action) {
-    if (action === 'increase' && currentDataCount < allData.length) {
-        currentDataCount++;
-    } else if (action === 'decrease' && currentDataCount > 1) {
-        currentDataCount--;
+    if (action === 'increase') {
+        // 增加数据逻辑
+    } else if (action === 'decrease') {
+        // 减少数据逻辑
     }
-    createBarChart(allData.slice(0, currentDataCount));
+    createBubbleMap(allData);
 }
 
-// Add event listeners to buttons
+// 为按钮添加事件监听器
 document.getElementById('increase').addEventListener('click', function() {
     updateData('increase');
 });

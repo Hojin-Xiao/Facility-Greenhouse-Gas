@@ -7,9 +7,12 @@
 </style> 
 
 <div id="plot">
+  <div id="bubble-map"></div>
 <button id="increase">Increase Data</button>
 <button id="decrease">Decrease Data</button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+ -->
+ <script src="scripts/d3.min.js"></script>
 <script src="scripts/myscript.js"></script>
