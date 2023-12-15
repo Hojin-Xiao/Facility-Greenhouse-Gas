@@ -1,1 +1,19 @@
 # Conclusion
+
+
+Lessons Learned: 
+The greenhouse gas from facility emission in Canada is mainly composed of CO2, CH4, N2O, CF4 etc. In order to address the environmental issue caused by greenhouse gas, these major components of the emission should be concentrated on. 
+
+We also discovered which facilities or which industrial sectors actually contribute most emission, these facilities and industrial sectors should be aimed if Canadian government will announce more regulations and policies in the future. 
+
+The greenhouse gas emission generally shows an increasing trend across these years and the majority of the emission comes from the low latitude inland provinces.
+
+Concession/Limitation: 
+Much more detailed analysis is yet to be achieved. For example, Will it produce us with more insights if we use the Statebins for the last part of the question to figure out the regional difference in greenhouse gas emission, what if we use the parallel coordinate plots to figure out the relationship among the emission of different gases (like does the emission amount of CH4 is negatively correlated with the emission amount of N2O etc.), or even use the facet plot to observe the emission amount of one specific gas like N2O in each Canadian province. 
+
+
+future directions:
+The two extensive datasets actually could provide audience much more insights than what we just showed. Some of the valuable questions like above we left unanswered are possible theme for interested audience to further explore. Furthermore, because these two datasets are only about the facility emission in Canada, a similar analysis could be conducted on the other countries around the world to evaluate greenhouse gas emission and possibly correlated environmental issues. 
+
+
+
